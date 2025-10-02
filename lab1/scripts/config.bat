@@ -1,9 +1,11 @@
 @echo off
+REM Go to the directory of the script
 cd /d %~dp0
 cd ..
 
-if not exist build mkdir build
-cd build
+REM Create bin/build folder if it doesn't exist
+if not exist bin\build mkdir bin\build
+cd bin\build
 
-:: Configure the project
-cmake ..
+REM Configure the project with CMake pointing to the project root
+cmake ../..
