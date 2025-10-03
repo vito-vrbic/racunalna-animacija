@@ -1,13 +1,12 @@
 // Local Headers
 #include "Mesh.hpp"
 #include "Shader.hpp"
+#include "Application.hpp"
 // Standard Headers
 #include <iostream>
 #include <memory>
 #include <string>
 // External Headers
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 using namespace RA;
 
@@ -19,12 +18,10 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Load the mesh from the first argument (OBJ file)
-    auto m = Mesh::LoadMesh(argv[1]);
+    std::shared_ptr<Application> app = std::make_shared<Application>(argv[1], argv[2]);
+    Application::Instance = app;
 
-    // Load the B-Spline curve from the second argument (CRV file)
-
-    //
+    Application::Instance->Run();
 
     return 0;
 }

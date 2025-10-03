@@ -1,6 +1,8 @@
 #pragma once
 
 // Local Headers
+#include "Transform.hpp"
+#include "Renderable.hpp"
 // Standard Headers
 #include <limits>
 #include <algorithm>
@@ -13,7 +15,7 @@
 
 namespace RA
 {
-    class Mesh
+    class Mesh : Transform, Renderable
     {
     public:
         /// @brief Loads a mesh from a '.obj' file using a file reader.
@@ -21,8 +23,11 @@ namespace RA
         /// @return shared_ptr to a Mesh object created from the file. Will be null if error.
         static std::shared_ptr<Mesh> LoadMesh(const std::string &filepath);
 
-        Mesh() = default;
-        ~Mesh() = default;
+        Mesh();
+        ~Mesh();
+
+        /// @brief Renders the mesh with the given shader.
+        void Mesh::Render(std::shared_ptr<Shader> shader, glm::mat4 view_mat, glm::mat4 pers_mat) override;
 
         /// @brief Vertices of the mesh. Should not be manually edited.
         std::vector<glm::vec3> Vertices;
@@ -48,5 +53,16 @@ namespace RA
 
         /// @brief Applies a transform to permanantly change positions of vertices.
         void _ApplyTransform(glm::mat4 matrix);
+
+        bool _mesh_setup = false;
+
+        // Updates mesh and sends its data to the GPU.
+        void _SetupMesh();
+
+        // VBOs for Vertices, Normals, and UVCoords
+        GLuint VBO[3];
+
+        // EBO for Indices.
+        GLuint EBO;
     };
 };

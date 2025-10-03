@@ -1,7 +1,7 @@
 // Local Headers
 #include "Transform.hpp"
 
-namespace IRG
+namespace RA
 {
     void Transform::CleanTransform()
     {
@@ -13,16 +13,7 @@ namespace IRG
         return _dirty;
     }
 
-    Transform::Transform() : _position(0.0f, 0.0f, 0.0f),
-
-                             _front(0.0f, 0.0f, 1.0f),
-                             _up(0.0f, 1.0f, 0.0f),
-                             _right(1.0f, 0.0f, 0.0f),
-
-                             _scale(1.0f, 1.0f, 1.0f),
-                             _dirty(true)
-    {
-    }
+    Transform::Transform() : _position(0.0f, 0.0f, 0.0f), _front(0.0f, 0.0f, 1.0f), _up(0.0f, 1.0f, 0.0f), _right(1.0f, 0.0f, 0.0f), _scale(1.0f, 1.0f, 1.0f), _dirty(true) {}
 
     void Transform::Rotate(const glm::mat4 &rotation)
     {
@@ -108,5 +99,37 @@ namespace IRG
     {
         _scale = scale;
         _dirty = true;
+    }
+
+    void Transform::_RecalculateMatrices()
+    {
+        // Model matrix = Translation * Rotation * Scale
+        glm::mat4 translation = glm::translate(glm::mat4(1.0f), _position);
+        glm::mat4 rotation = glm::mat4(1.0f);
+        rotation[0] = glm::vec4(_right, 0.0f);
+        rotation[1] = glm::vec4(_up, 0.0f);
+        rotation[2] = glm::vec4(-_front, 0.0f); // note: OpenGL expects -Z as forward
+        glm::mat4 scaling = glm::scale(glm::mat4(1.0f), _scale);
+
+        _modelMatrix = translation * rotation * scaling;
+
+        // View matrix = lookAt(position, position + front, up)
+        _viewMatrix = glm::lookAt(_position, _position + _front, _up);
+
+        CleanTransform();
+    }
+
+    glm::mat4 Transform::GetModelMatrix()
+    {
+        if (_dirty)
+            _RecalculateMatrices();
+        return _modelMatrix;
+    }
+
+    glm::mat4 Transform::GetViewMatrix()
+    {
+        if (_dirty)
+            _RecalculateMatrices();
+        return _viewMatrix;
     }
 }

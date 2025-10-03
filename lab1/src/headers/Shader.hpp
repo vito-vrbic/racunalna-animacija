@@ -1,7 +1,6 @@
 #pragma once
 
 // Local Headers
-
 // Standard Headers
 #include <string>
 #include <memory>

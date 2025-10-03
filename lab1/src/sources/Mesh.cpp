@@ -84,6 +84,27 @@ namespace RA
         return mesh;
     }
 
+    void Mesh::Render(std::shared_ptr<Shader> shader, glm::mat4 view_mat, glm::mat4 pers_mat)
+    {
+        shader->Use();
+        shader->SetUniform("MODEL_MAT", this->GetModelMatrix());
+        shader->SetUniform("VIEW_MAT", view_mat);
+        shader->SetUniform("PERS_MAT", pers_mat);
+
+        if (!_mesh_setup)
+            _SetupMesh();
+
+        // Bind the VAO containing vertex attribute configuration.
+        glBindVertexArray(VAO);
+
+        // Draw the mesh using the indices stored in the EBO.
+        // GL_TRIANGLES is used as the primitive type.
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(Indices.size()), GL_UNSIGNED_INT, 0);
+
+        // Unbind the VAO after drawing.
+        glBindVertexArray(0);
+    }
+
     void Mesh::_ComputeNormals()
     {
         // Initialize normals with zeros
@@ -173,5 +194,91 @@ namespace RA
             v = matrix * v;
             Vertices[i] = glm::vec3(v);
         }
+    }
+
+    Mesh::Mesh() : Renderable()
+    {
+        // Set all VBOs and the EBO to 0 (indicating they are not generated yet).
+        VBO[0] = 0;
+        VBO[1] = 0;
+        VBO[2] = 0;
+        EBO = 0;
+
+        // Is mesh data sent to the GPU.
+        _mesh_setup = false;
+    }
+
+    Mesh::~Mesh()
+    {
+        if (VBO[0])
+            glDeleteBuffers(1, &VBO[0]);
+        if (VBO[1])
+            glDeleteBuffers(1, &VBO[1]);
+        if (VBO[2])
+            glDeleteBuffers(1, &VBO[2]);
+        if (EBO)
+            glDeleteBuffers(1, &EBO);
+    }
+
+    // Uploads mesh data to the GPU and sets up vertex attribute pointers.
+    void Mesh::_SetupMesh()
+    {
+        // Bind the VAO (created in the Renderable constructor).
+        glBindVertexArray(VAO);
+
+        // Ensure the VBO for vertices exists; if not, generate it.
+        if (VBO[0] == 0)
+        {
+            glGenBuffers(1, &VBO[0]);
+        }
+
+        // Bind and upload vertex data.
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+        glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(glm::vec3), &Vertices[0], GL_STATIC_DRAW);
+
+        // Set vertex attribute pointer for layout location 0.
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *)0);
+        glEnableVertexAttribArray(0);
+
+        // Setup VBO for normals at layout location 1 if normals exist.
+        if (!Normals.empty())
+        {
+            if (VBO[1] == 0)
+            {
+                glGenBuffers(1, &VBO[1]);
+            }
+            glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+            glBufferData(GL_ARRAY_BUFFER, Normals.size() * sizeof(glm::vec3), &Normals[0], GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *)0);
+            glEnableVertexAttribArray(1);
+        }
+
+        // Setup VBO for UV coordinates at layout location 2 if UVs exist.
+        if (!UVCoords.empty())
+        {
+            if (VBO[2] == 0)
+            {
+                glGenBuffers(1, &VBO[2]);
+            }
+            glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+            glBufferData(GL_ARRAY_BUFFER, UVCoords.size() * sizeof(glm::vec2), &UVCoords[0], GL_STATIC_DRAW);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void *)0);
+            glEnableVertexAttribArray(2);
+        }
+
+        // Ensure the EBO exists; if not, generate it.
+        if (EBO == 0)
+        {
+            glGenBuffers(1, &EBO);
+        }
+
+        // Bind and upload index data.
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned int), &Indices[0], GL_STATIC_DRAW);
+
+        // Unbind the VAO (note: the EBO remains bound to the VAO).
+        glBindVertexArray(0);
+
+        _mesh_setup = true;
     }
 }
