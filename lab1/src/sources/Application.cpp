@@ -44,7 +44,9 @@ namespace RA
 
             // Render
             _Renderer->Clear();
+
             _Assets.ObjectMesh->Render(_Assets.ObjectShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
+            _Assets.PolygonPolyline->Render(_Assets.PolylineShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
 
             _Window->SwapBuffers();
             _Window->PollEvents();

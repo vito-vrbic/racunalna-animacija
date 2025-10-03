@@ -1,0 +1,45 @@
+#include "Assets.hpp"
+
+namespace RA
+{
+    std::vector<glm::vec3> Assets::LoadCRV(std::string filename)
+    {
+        std::vector<glm::vec3> points;
+        std::ifstream file(filename);
+
+        if (!file.is_open())
+        {
+            std::cerr << "[ERROR] Failed to open curve file: " << filename << std::endl;
+            return points;
+        }
+
+        std::string line;
+        while (std::getline(file, line))
+        {
+            if (line.empty())
+                continue;
+
+            std::istringstream iss(line);
+            float x, y, z;
+            if (iss >> x >> y >> z)
+            {
+                points.emplace_back(x, y, z);
+            }
+            else
+            {
+                std::cerr << "[WARNING] Invalid line in curve file: " << line << std::endl;
+            }
+        }
+
+        file.close();
+        return points;
+    }
+    void Assets::LoadAssets()
+    {
+        ObjectShader = Shader::LoadShader("object");
+        PolylineShader = Shader::LoadShader("polyline");
+        ObjectMesh = Mesh::LoadMesh(MeshFile);
+        PolygonPolyline = std::make_shared<Polyline>(3.f, glm::vec4(0.5f, 0.5f, 0.5f, 1.f));
+        PolygonPolyline->SetPoints(LoadCRV(CurveFile));
+    }
+}
