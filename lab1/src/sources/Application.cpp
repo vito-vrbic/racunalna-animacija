@@ -7,31 +7,29 @@ namespace RA
 {
     std::shared_ptr<Application> Application::Instance = nullptr;
 
-    Application::Application(std::string mesh_file, std::string curve_file)
-        : _MeshFile(mesh_file), _CurveFile(curve_file)
+    Application::Application()
     {
         _Camera = Camera();
     }
 
     void Application::Run()
     {
-        // Create subsystems
-        _Window = std::make_unique<Window>(1000, 800, "Laboratorijska Vježba 1");
-        _Renderer = std::make_unique<Renderer>();
+        // Open Window
+        _Window = std::make_unique<Window>(1000, 800, "Računalna Animacija - Laboratorijska Vježba 1");
 
+        // Setup of Rendering
+        _Renderer = std::make_unique<Renderer>();
         _Renderer->SetWireframe(true);
 
-        _LoadAssets();
-        _AppLoop();
+        // Load Assets
+        _Assets = Assets();
+        _Assets.LoadAssets();
+
+        // Start Application Loop
+        _Loop();
     }
 
-    void Application::_LoadAssets()
-    {
-        _ObjectMesh = Mesh::LoadMesh(_MeshFile);
-        _ObjectShader = Shader::LoadShader("object");
-    }
-
-    void Application::_AppLoop()
+    void Application::_Loop()
     {
         float lastFrame = 0.0f;
 
@@ -42,11 +40,11 @@ namespace RA
             lastFrame = currentFrame;
 
             // Input
-            Input::ProcessInput(_Window->GetNativeHandle(), deltaTime, _Camera);
+            Input::ProcessCameraInput(_Window->GetNativeHandle(), deltaTime, _Camera);
 
             // Render
             _Renderer->Clear();
-            _ObjectMesh->Render(_ObjectShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
+            _Assets.ObjectMesh->Render(_Assets.ObjectShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
 
             _Window->SwapBuffers();
             _Window->PollEvents();

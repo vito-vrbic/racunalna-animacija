@@ -1,5 +1,6 @@
 // Local Headers
 #include "Application.hpp"
+#include "Assets.hpp"
 // Standard Headers
 #include <iostream>
 #include <memory>
@@ -16,7 +17,10 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Application::Instance = make_shared<Application>(argv[1], argv[2]);
+    Assets::MeshFile = argv[1];
+    Assets::CurveFile = argv[2];
+
+    Application::Instance = make_shared<Application>();
     Application::Instance->Run();
 
     return 0;

@@ -1,7 +1,7 @@
 #include "Input.hpp"
 #include <iostream>
 
-void RA::Input::ProcessInput(GLFWwindow *window, float deltaTime, RA::Transform &camera)
+void RA::Input::ProcessCameraInput(GLFWwindow *window, float deltaTime, RA::Transform &camera)
 {
     float cameraSpeed = 1.5f * deltaTime;
 

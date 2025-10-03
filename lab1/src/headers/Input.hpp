@@ -7,7 +7,7 @@ namespace RA
     class Input
     {
     public:
-        static void ProcessInput(GLFWwindow *window, float deltaTime, RA::Transform &camera);
+        static void ProcessCameraInput(GLFWwindow *window, float deltaTime, RA::Transform &camera);
 
     private:
         static inline double _LastMouseX = 0.0;
