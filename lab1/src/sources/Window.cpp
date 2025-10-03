@@ -12,16 +12,16 @@ Window::Window(int width, int height, const std::string &title)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    _window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-    if (!_window)
+    _Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    if (!_Window)
     {
         std::cerr << "[ERROR]: Failed to create GLFW window." << std::endl;
         glfwTerminate();
         exit(1);
     }
 
-    glfwMakeContextCurrent(_window);
-    glfwSetFramebufferSizeCallback(_window, FramebufferSizeCallback);
+    glfwMakeContextCurrent(_Window);
+    glfwSetFramebufferSizeCallback(_Window, FramebufferSizeCallback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -34,13 +34,13 @@ Window::Window(int width, int height, const std::string &title)
 
 Window::~Window()
 {
-    glfwDestroyWindow(_window);
+    glfwDestroyWindow(_Window);
     glfwTerminate();
 }
 
 bool Window::ShouldClose() const
 {
-    return glfwWindowShouldClose(_window);
+    return glfwWindowShouldClose(_Window);
 }
 
 void Window::PollEvents() const
@@ -50,10 +50,20 @@ void Window::PollEvents() const
 
 void Window::SwapBuffers() const
 {
-    glfwSwapBuffers(_window);
+    glfwSwapBuffers(_Window);
 }
 
 void Window::FramebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+glm::mat4 Window::GetPerspectiveMatrix(float fov, float nearPlane, float farPlane) const
+{
+    int width, height;
+    glfwGetFramebufferSize(_Window, &width, &height);
+
+    float aspect = (height > 0) ? static_cast<float>(width) / height : 1.0f;
+
+    return glm::perspective(glm::radians(fov), aspect, nearPlane, farPlane);
 }

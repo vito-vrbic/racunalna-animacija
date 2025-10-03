@@ -5,6 +5,8 @@
 #include "Shader.hpp"
 #include "Window.hpp"
 #include "Renderer.hpp"
+#include "Input.hpp"
+#include "Camera.hpp"
 
 // External headers
 #include <glm/glm.hpp>
@@ -22,7 +24,6 @@ namespace RA
         Application(std::string mesh_file, std::string curve_file);
 
         void Run();
-        glm::mat4 GetPerspectiveMatrix();
 
     private:
         // File paths
@@ -30,24 +31,18 @@ namespace RA
         const std::string _CurveFile;
 
         // Core subsystems
-        std::unique_ptr<Window> _window;
-        std::unique_ptr<Renderer> _renderer;
+        std::unique_ptr<Window> _Window;
+        std::unique_ptr<Renderer> _Renderer;
 
         // Assets
-        std::shared_ptr<Mesh> Mesh;
+        std::shared_ptr<Mesh> _ObjectMesh;
         std::shared_ptr<Shader> _ObjectShader;
 
         // Camera
-        Transform Camera;
-
-        // Mouse tracking
-        double _lastMouseX = 0.0;
-        double _lastMouseY = 0.0;
-        bool _firstMouse = true;
+        Camera _Camera;
 
         // Helpers
         void _LoadAssets();
         void _AppLoop();
-        void _MoveCamera(float deltaTime);
     };
 }
