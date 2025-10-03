@@ -13,7 +13,7 @@ void Renderer::InitOpenGL()
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
 
     std::cout << "[DEBUG]: Renderer initialized with depth test + back-face culling.\n";
 }

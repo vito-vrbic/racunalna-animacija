@@ -14,7 +14,7 @@ namespace RA
         glm::mat4 rotation(1.0f);
         rotation[0] = glm::vec4(_right, 0.0f);
         rotation[1] = glm::vec4(_up, 0.0f);
-        rotation[2] = glm::vec4(-_front, 0.0f);
+        rotation[2] = glm::vec4(_front, 0.0f);
         glm::mat4 scaling = glm::scale(glm::mat4(1.0f), _scale);
 
         _modelMatrix = translation * rotation * scaling;

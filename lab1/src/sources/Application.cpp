@@ -41,12 +41,14 @@ namespace RA
 
             // Input
             Input::ProcessCameraInput(_Window->GetNativeHandle(), deltaTime, _Camera);
+            Input::ProcessBSplineFollow(_Window->GetNativeHandle(), deltaTime, _Assets.ObjectMesh, _Assets.ObjectTangent, _Assets.BSplineCurve);
 
             // Render
             _Renderer->Clear();
 
             _Assets.ObjectMesh->Render(_Assets.ObjectShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
-            _Assets.PolygonPolyline->Render(_Assets.PolylineShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
+            _Assets.BSplineCurve->Render(_Assets.PolylineShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
+            _Assets.ObjectTangent->Render(_Assets.PolylineShader, _Camera.GetViewMatrix(), _Window->GetPerspectiveMatrix());
 
             _Window->SwapBuffers();
             _Window->PollEvents();

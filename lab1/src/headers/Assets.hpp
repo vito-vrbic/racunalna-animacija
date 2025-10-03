@@ -2,6 +2,7 @@
 
 #include "Mesh.hpp"
 #include "Shader.hpp"
+#include "BSpline.hpp"
 #include "Polyline.hpp"
 #include <memory>
 #include <vector>
@@ -20,7 +21,8 @@ namespace RA
         std::shared_ptr<Shader> PolylineShader;
 
         std::shared_ptr<Mesh> ObjectMesh;
-        std::shared_ptr<Polyline> PolygonPolyline;
+        std::shared_ptr<BSpline> BSplineCurve;
+        std::shared_ptr<Polyline> ObjectTangent;
 
         void LoadAssets();
     };

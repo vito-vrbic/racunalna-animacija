@@ -1,17 +1,18 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include "Transform.hpp"
+#include "Mesh.hpp"
+#include "BSpline.hpp"
+
 namespace RA
 {
     class Input
     {
     public:
+        // Camera movement
         static void ProcessCameraInput(GLFWwindow *window, float deltaTime, RA::Transform &camera);
 
-    private:
-        static inline double _LastMouseX = 0.0;
-        static inline double _LastMouseY = 0.0;
-        static inline bool _FirstMouse = true;
+        // Follow a B-spline
+        static void ProcessBSplineFollow(GLFWwindow *window, float delta_time, std::shared_ptr<Mesh> mesh, std::shared_ptr<Polyline> front_vec, std::shared_ptr<BSpline> spline);
     };
-};
+}

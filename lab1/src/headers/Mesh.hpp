@@ -15,7 +15,7 @@
 
 namespace RA
 {
-    class Mesh : Transform, Renderable
+    class Mesh : public Transform, public Renderable
     {
     public:
         /// @brief Loads a mesh from a '.obj' file using a file reader.
