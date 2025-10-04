@@ -84,6 +84,13 @@ namespace RA
         _up = glm::normalize(glm::cross(_right, _front));
         _dirty = true;
     }
+    void Transform::SetOrientation(const glm::vec3 &front, const glm::vec3 &up, const glm::vec3 &right)
+    {
+        _front = glm::normalize(front);
+        _right = glm::normalize(right);
+        _up = glm::normalize(up);
+        _dirty = true;
+    }
     void Transform::SetScale(const glm::vec3 &scale)
     {
         _scale = scale;

@@ -1,18 +1,20 @@
 #pragma once
+
+// Local headers
 #include "Transform.hpp"
 
 namespace RA
 {
     class Camera : public Transform
     {
-    private:
-        glm::mat4 _viewMatrix;
-
-        void _RecalculateViewMatrix();
-
     public:
-        Camera(); // Constructor sets default orientation along -Z
+        Camera();
 
         glm::mat4 GetViewMatrix();
+
+    private:
+        glm::mat4 _view_matrix;
+
+        void _RecalculateViewMatrix();
     };
 }

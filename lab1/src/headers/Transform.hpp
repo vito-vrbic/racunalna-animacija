@@ -1,5 +1,6 @@
 #pragma once
 
+// External headers
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -29,6 +30,7 @@ namespace RA
 		void MoveL(const glm::vec3 &delta);
 		void SetPosition(const glm::vec3 &position);
 		void SetOrientation(const glm::vec3 &front, const glm::vec3 &up);
+		void SetOrientation(const glm::vec3 &front, const glm::vec3 &up, const glm::vec3 &right);
 		void SetScale(const glm::vec3 &scale);
 
 		glm::vec3 GetPosition() const { return _position; }

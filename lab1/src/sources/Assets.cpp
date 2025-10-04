@@ -38,11 +38,13 @@ namespace RA
     {
         ObjectShader = Shader::LoadShader("object");
         PolylineShader = Shader::LoadShader("polyline");
+
         ObjectMesh = Mesh::LoadMesh(MeshFile);
         BSplineCurve = std::make_shared<BSpline>();
         BSplineCurve->SetControlPoints(LoadCRV(CurveFile));
+
         ObjectTangent = std::make_shared<Polyline>(5.0f, glm::vec4(0.7f, 0.4f, 0.11f, 1.f));
         ObjectTangent->AddPoint(glm::vec3(0.f, 0.f, 0.f));
-        ObjectTangent->AddPoint(glm::vec3(0.f, 0.f, 3.f));
+        ObjectTangent->AddPoint(glm::vec3(0.f, 0.f, 1.f));
     }
 }

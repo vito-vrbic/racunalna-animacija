@@ -96,20 +96,92 @@ void RA::Input::ProcessBSplineFollow(GLFWwindow *window, float delta_time, std::
             current_segment = 0; // loop to start
     }
 
-    // Compute position on B-spline
+    // Compute position, tangent, normal on B-spline
     glm::vec3 position = spline->GetPoint(current_segment, current_t);
-    glm::vec3 front = spline->GetTangent(current_segment, current_t);
+    glm::vec3 tangent = spline->GetTangent(current_segment, current_t);
+    glm::vec3 normal = spline->GetNormal(current_segment, current_t);
+    glm::vec3 binormal = glm::cross(tangent, normal);
+
+    glm::vec3 current_front(tangent);
+
+    _PrintAxisDifference(current_front, delta_time);
 
     // Update mesh
     if (mesh)
     {
         mesh->SetPosition(position);
-        mesh->SetOrientation(front, glm::vec3(0.f, 1.f, 0.f));
+        mesh->SetOrientation(tangent, normal, binormal);
     }
 
     if (front_vec)
     {
         front_vec->SetPosition(position);
-        front_vec->SetOrientation(front, glm::vec3(0.f, 1.f, 0.f));
+        front_vec->SetOrientation(tangent, normal, binormal);
+    }
+}
+
+void RA::Input::_ComputeRotationFromTo(const glm::vec3 &s, const glm::vec3 &e, glm::vec3 &out_axis, float &out_angle)
+{
+    glm::vec3 start = glm::normalize(s);
+    glm::vec3 end = glm::normalize(e);
+
+    // Rotation axis = s cross e
+    out_axis = glm::cross(start, end);
+
+    float axisLength = glm::length(out_axis);
+
+    if (axisLength < 1e-6f)
+    {
+        // No rotation if vectors are parallel.
+        out_axis = glm::vec3(0, 1, 0);
+        out_angle = 0.0f;
+        return;
+    }
+
+    out_axis = glm::normalize(out_axis);
+
+    // Rotation = arccos(s dot e)
+    float cosTheta = glm::clamp(glm::dot(start, end), -1.0f, 1.0f);
+    out_angle = glm::degrees(acos(cosTheta));
+}
+
+void RA::Input::_PrintAxisDifference(const glm::vec3 &current_front, float delta_time)
+{
+    static float time_accumulator = 0.0f;
+    static float print_interval = 0.1f; // seconds
+    static glm::vec3 original_front;
+    static bool has_original = false;
+
+    // Initialize on first call
+    if (!has_original)
+    {
+        original_front = current_front;
+        has_original = true;
+        return;
+    }
+
+    // Accumulate time
+    time_accumulator += delta_time;
+
+    // Every few seconds, compute and print difference
+    if (time_accumulator >= print_interval)
+    {
+        glm::vec3 axis;
+        float angle;
+        _ComputeRotationFromTo(original_front, current_front, axis, angle);
+
+        std::cout << "[DEBUG]: Rotation Difference After " << print_interval << "s" << std::endl;
+
+        std::cout << "From (" << original_front.x << ", " << original_front.y << ", " << original_front.z << ")" << "to (" << current_front.x << ", " << current_front.y << ", " << current_front.z << ")" << std::endl;
+
+        std::cout << "Axis: (" << axis.x << ", " << axis.y << ", " << axis.z << ") " << std::endl;
+
+        std::cout << "Angle diff: " << angle << std::endl;
+
+        std::cout << std::endl;
+
+        // Reset for next interval
+        time_accumulator = 0.0f;
+        original_front = current_front;
     }
 }
