@@ -1,48 +1,92 @@
 #include "Application.hpp"
-#include <memory>
 
-namespace RA
+namespace RA::Application
 {
-    std::shared_ptr<Application> Application::Instance = nullptr;
+    std::shared_ptr<RA::Window> Window = nullptr;
+    std::shared_ptr<RA::Camera> Camera = nullptr;
+}
 
-    Application::Application()
+void RA::Application::Initialize()
+{
+    Application::Window = std::make_shared<RA::Window>(1000, 800, "2nd Laboratory Exercise");
+    Application::Camera = std::make_shared<RA::Camera>();
+}
+
+void InputMoveCamera(GLFWwindow *window, float delta_time, std::shared_ptr<RA::Camera> &camera)
+{
+    static double last_mouse_x = 0.0;
+    static double last_mouse_y = 0.0;
+    static bool first_mouse = true;
+
+    float cameraSpeed = 1.5f * delta_time;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        cameraSpeed *= 3.0f;
+    else
+        cameraSpeed *= 0.5f;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(0.0f, 0.0f, -cameraSpeed));
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(0.0f, 0.0f, cameraSpeed));
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(-cameraSpeed, 0.0f, 0.0f));
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(cameraSpeed, 0.0f, 0.0f));
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(0.0f, -cameraSpeed, 0.0f));
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(0.0f, cameraSpeed, 0.0f));
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
     {
-        _Camera = std::make_shared<Camera>();
-    }
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    void Application::Run()
-    {
-        // Open Window
-        _Window = std::make_unique<Window>(1000, 800, "Računalna Animacija - Laboratorijska Vježba 2");
+        double mouseX, mouseY;
+        glfwGetCursorPos(window, &mouseX, &mouseY);
 
-        // Load Assets
-        Assets::LoadAssets();
-
-        // Setup Renderer
-        _Renderer = std::make_shared<Renderer>();
-
-        // Start Application Loop
-        _Loop();
-    }
-
-    void Application::_Loop()
-    {
-        float lastFrame = 0.0f;
-
-        while (!_Window->ShouldClose())
+        if (first_mouse)
         {
-            float currentFrame = static_cast<float>(glfwGetTime());
-            float delta_time = currentFrame - lastFrame;
-            lastFrame = currentFrame;
-
-            // Input
-            Input::ProcessCameraInput(_Window->GetNativeHandle(), delta_time, _Camera);
-
-            // Render scene via renderer
-            _Renderer->Render(_Camera);
-
-            _Window->SwapBuffers();
-            _Window->PollEvents();
+            last_mouse_x = mouseX;
+            last_mouse_y = mouseY;
+            first_mouse = false;
         }
+
+        float xoffset = static_cast<float>(mouseX - last_mouse_x);
+        float yoffset = static_cast<float>(last_mouse_y - mouseY);
+
+        last_mouse_x = mouseX;
+        last_mouse_y = mouseY;
+
+        const float sensitivity = 0.5f;
+        camera->Rotate(xoffset, yoffset, true, sensitivity);
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        first_mouse = true;
+    }
+}
+
+void RA::Application::Run()
+{
+    float last_frame = 0.0f;
+
+    while (!Window->ShouldClose())
+    {
+        // Calculate the delta_time
+        float current_frame = static_cast<float>(glfwGetTime());
+        float delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+
+        // Input: Camera Movement.
+        InputMoveCamera(Window->GetNativeHandle(), delta_time, Camera);
+
+        // TODO: PARTICLE SYSTEM COMPUTE SHADER CALLS.
+        // TODO: PARTICLE SYSTEM RENDERING.
+
+        Window->SwapBuffers();
+        Window->PollEvents();
+        Window->Clear(1, 1, 1, 1);
     }
 }

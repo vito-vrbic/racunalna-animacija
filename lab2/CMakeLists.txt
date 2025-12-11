@@ -26,7 +26,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 # STD_IMAGE (header-only)
-set(STB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/dependencies/stb_image)
+set(STD_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/dependencies/std_image)
 
 # Source files
 file(GLOB SRC_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/sources/*.cpp")
@@ -45,7 +45,7 @@ target_include_directories(LAB2 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/headers                 # Local headers
     ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glad/include   # GLAD headers
     ${glm_SOURCE_DIR}                                       # GLM headers
-    ${STB_INCLUDE_DIR}                                      # stb_image headers
+    ${STD_INCLUDE_DIR}                                      # stb_image headers
 )
 
 # Copy shaders folder to the output directory of each build configuration

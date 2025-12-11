@@ -1,16 +1,19 @@
-// Local Headers
+// Local
 #include "Application.hpp"
-// Standard Headers
+#include "Assets.hpp"
+// Standard
 #include <iostream>
 #include <memory>
-// External Headers
+// External
 
 using namespace RA;
 
 int main(int argc, char *argv[])
 {
-    Application::Instance = std::make_shared<Application>();
-    Application::Instance->Run();
+    Application::Initialize();
+    Assets::Load();
 
-    return 0;
+    // SCENE SETUP
+
+    Application::Run();
 }

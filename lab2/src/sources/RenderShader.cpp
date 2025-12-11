@@ -1,7 +1,6 @@
-// Local Headers
-#include "Shader.hpp"
+#include "RenderShader.hpp"
 
-RA::Shader::Shader(const char *vertex_path, const char *fragment_path) : _geometry(false)
+RA::RenderShader::RenderShader(const char *vertex_path, const char *fragment_path) : _geometry(false)
 {
 	std::string vertexCode;
 	std::string fragmentCode;
@@ -67,7 +66,7 @@ RA::Shader::Shader(const char *vertex_path, const char *fragment_path) : _geomet
 	glDeleteShader(fragment);
 }
 
-RA::Shader::Shader(const char *vertex_path, const char *geometry_path, const char *fragment_path) : _geometry(true)
+RA::RenderShader::RenderShader(const char *vertex_path, const char *geometry_path, const char *fragment_path) : _geometry(true)
 {
 	std::string vertexCode;
 	std::string geometryCode;
@@ -147,44 +146,44 @@ RA::Shader::Shader(const char *vertex_path, const char *geometry_path, const cha
 	glDeleteShader(fragment);
 }
 
-RA::Shader::~Shader()
+RA::RenderShader::~RenderShader()
 {
 	// Deleting the program.
 	glDeleteProgram(ID);
 }
 
-void RA::Shader::Use()
+void RA::RenderShader::Use()
 {
 	// Using the program.
 	glUseProgram(ID);
 }
 
-void RA::Shader::SetUniform(const std::string &name, bool value) const
+void RA::RenderShader::SetUniform(const std::string &name, bool value) const
 {
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 
-void RA::Shader::SetUniform(const std::string &name, int value) const
+void RA::RenderShader::SetUniform(const std::string &name, int value) const
 {
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void RA::Shader::SetUniform(const std::string &name, float value) const
+void RA::RenderShader::SetUniform(const std::string &name, float value) const
 {
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void RA::Shader::SetUniform(const std::string &name, const glm::mat4 &matrix) const
+void RA::RenderShader::SetUniform(const std::string &name, const glm::mat4 &matrix) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void RA::Shader::SetUniform(const std::string &name, const glm::vec4 &vec) const
+void RA::RenderShader::SetUniform(const std::string &name, const glm::vec4 &vec) const
 {
 	glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
 }
 
-std::shared_ptr<RA::Shader> RA::Shader::LoadShader(const char *name)
+std::shared_ptr<RA::RenderShader> RA::RenderShader::LoadShader(const char *name)
 {
 	std::string path_vert = "./shaders/" + std::string(name) + ".vert";
 	std::string path_frag = "./shaders/" + std::string(name) + ".frag";
@@ -195,15 +194,15 @@ std::shared_ptr<RA::Shader> RA::Shader::LoadShader(const char *name)
 	if (file)
 	{
 		std::fclose(file);
-		return std::make_shared<Shader>(path_vert.c_str(), path_geom.c_str(), path_frag.c_str());
+		return std::make_shared<RenderShader>(path_vert.c_str(), path_geom.c_str(), path_frag.c_str());
 	}
 	else
 	{
-		return std::make_shared<Shader>(path_vert.c_str(), path_frag.c_str());
+		return std::make_shared<RenderShader>(path_vert.c_str(), path_frag.c_str());
 	}
 }
 
-void RA::Shader::_CheckCompilerErrors(unsigned int shader, std::string type)
+void RA::RenderShader::_CheckCompilerErrors(unsigned int shader, std::string type)
 {
 	int success;
 	char infolog[1024];

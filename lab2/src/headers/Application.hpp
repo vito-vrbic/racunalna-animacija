@@ -1,35 +1,23 @@
 #pragma once
 
-// Local headers
+// Local
 #include "Camera.hpp"
-#include "Renderer.hpp"
 #include "Window.hpp"
-#include "Input.hpp"
-
-// Standard headers
-
-// External headers
+// Standard
+#include <iostream>
+#include <memory>
 
 namespace RA
 {
-    class Application
+    namespace Application
     {
-    public:
-        /// @brief Singleton instance of the application
-        static std::shared_ptr<Application> Instance;
+        /// Initializes all the important stuff about the application.
+        void Initialize();
 
-        /// @brief Constructor
-        Application();
-
-        /// @brief Start the application loop
+        /// Runs the application loop.
         void Run();
 
-    private:
-        std::shared_ptr<Window> _Window;     ///< Main application window
-        std::shared_ptr<Renderer> _Renderer; ///< Renderer for drawing
-        std::shared_ptr<Camera> _Camera;     ///< Main camera for the scene
-
-        /// @brief Main application loop
-        void _Loop();
+        extern std::shared_ptr<RA::Window> Window;
+        extern std::shared_ptr<RA::Camera> Camera;
     };
-}
+};

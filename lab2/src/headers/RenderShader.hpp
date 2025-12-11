@@ -1,14 +1,12 @@
 #pragma once
 
-// Local Headers
-// Standard Headers
+// Standard
 #include <string>
 #include <memory>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-// External Headers
+// External
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,28 +14,28 @@
 namespace RA
 {
 	/**
-	 * @brief Wrapper class for handling GLSL shaders.
+	 * @brief Wrapper class for handling GLSL render shaders.
 	 *
 	 * This class loads, compiles, links, and manages vertex/fragment (and optional geometry) shaders.
 	 * It also provides utility functions for setting common uniform variables.
 	 */
-	class Shader
+	class RenderShader
 	{
 	public:
 		/// @brief Load a shader program by name (helper for external use).
-		static std::shared_ptr<Shader> LoadShader(const char *name);
+		static std::shared_ptr<RenderShader> LoadShader(const char *name);
 
 		/// @brief OpenGL shader program ID.
 		unsigned int ID;
 
 		/// @brief Construct a shader program from vertex and fragment shader source files.
-		Shader(const char *vertex_path, const char *fragment_path);
+		RenderShader(const char *vertex_path, const char *fragment_path);
 
 		/// @brief Construct a shader program with vertex, geometry, and fragment shaders.
-		Shader(const char *vertex_path, const char *geometry_path, const char *fragment_path);
+		RenderShader(const char *vertex_path, const char *geometry_path, const char *fragment_path);
 
 		/// @brief Destructor – deletes the OpenGL shader program.
-		~Shader();
+		~RenderShader();
 
 		/// @brief Activate (use) this shader program.
 		void Use();

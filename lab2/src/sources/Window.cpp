@@ -1,6 +1,6 @@
 #include "Window.hpp"
 
-Window::Window(int width, int height, const std::string &title)
+RA::Window::Window(int width, int height, const std::string &title)
 {
     if (!glfwInit())
     {
@@ -8,8 +8,8 @@ Window::Window(int width, int height, const std::string &title)
         exit(1);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     _Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
@@ -29,36 +29,52 @@ Window::Window(int width, int height, const std::string &title)
         exit(1);
     }
 
-    std::cout << "[DEBUG]: OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+    _InitOpenGL();
 }
 
-Window::~Window()
+RA::Window::~Window()
 {
     glfwDestroyWindow(_Window);
     glfwTerminate();
 }
 
-bool Window::ShouldClose() const
+bool RA::Window::ShouldClose() const
 {
     return glfwWindowShouldClose(_Window);
 }
 
-void Window::PollEvents() const
+void RA::Window::PollEvents() const
 {
     glfwPollEvents();
 }
 
-void Window::SwapBuffers() const
+void RA::Window::SwapBuffers() const
 {
     glfwSwapBuffers(_Window);
 }
 
-void Window::FramebufferSizeCallback(GLFWwindow *window, int width, int height)
+void RA::Window::FramebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-glm::mat4 Window::GetPerspectiveMatrix(float fov, float nearPlane, float farPlane) const
+void RA::Window::_InitOpenGL()
+{
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+}
+
+void RA::Window::Clear(float r, float g, float b, float a)
+{
+    glClearColor(r, g, b, a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+glm::mat4 RA::Window::GetPerspectiveMatrix(float fov, float nearPlane, float farPlane) const
 {
     int width, height;
     glfwGetFramebufferSize(_Window, &width, &height);

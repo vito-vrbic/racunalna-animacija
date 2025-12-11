@@ -1,11 +1,13 @@
 #include "Assets.hpp"
 
-namespace RA
+namespace RA::Assets
 {
-    void Assets::LoadAssets()
-    {
-        // ParticleSystemShader initialization.
+    std::shared_ptr<RA::ComputeShader> PSCompute = nullptr;
+    std::shared_ptr<RA::RenderShader> PSRender = nullptr;
+}
 
-        // Load textures needed.
-    }
+void RA::Assets::Load()
+{
+    PSCompute = ComputeShader::LoadShader("ps_compute");
+    PSRender = RenderShader::LoadShader("ps_render");
 }
