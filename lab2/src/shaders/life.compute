@@ -10,33 +10,35 @@ struct Particle
     float age;
 };
 
-layout(std430, binding = 0) buffer Particles { Particle particles[]; };
-layout(std430, binding = 1) buffer DeadList { uint dead_indices[]; };
+// Particle buffer
+layout(std430, binding = 0) buffer Particles
+{
+    Particle particles[];
+};
 
+// Uniforms
 uniform float delta_time;
 uniform int max_particles;
 
 void main()
 {
     uint idx = gl_GlobalInvocationID.x;
-    if(idx >= max_particles) return;
+    if (idx >= max_particles) return;
 
-    if(particles[idx].age < 0) return;
+    if (particles[idx].age < 0.0) return;
 
     // Gravity
-    particles[idx].velocity += vec3(0.0,-9.8,0.0) * delta_time;
+    particles[idx].velocity += vec3(0.0, -9.8, 0.0) * delta_time;
 
-    // Size decay
-    particles[idx].size *= (1.0 - delta_time);
-    if(particles[idx].size < 0) particles[idx].size = 0.0;
+    // Shrink size
+    if(particles[idx].size > 0.0) particles[idx].size *= 1.0 - delta_time;
+    if(particles[idx].size < 0.0) particles[idx].size = 0.0;
 
-    // Age particles
-    if((particles[idx].age += delta_time) > 1.0)
+    // Age particle
+    particles[idx].age += delta_time;
+    if(particles[idx].age > 1.0)
     {
         particles[idx].age = -1.0;
-
-        uint dead_slot = atomicAdd(dead_indices[0], 1);
-        dead_indices[dead_slot + 1] = idx;
     }
     else
     {

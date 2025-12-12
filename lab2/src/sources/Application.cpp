@@ -75,6 +75,7 @@ void RA::Application::Run()
 {
     float last_frame = 0.0f;
 
+    int i = 0;
     while (!Window->ShouldClose())
     {
         Window->Clear(0, 0, 0, 1);
@@ -87,7 +88,17 @@ void RA::Application::Run()
         // Input: Camera Movement.
         InputMoveCamera(Window->GetNativeHandle(), delta_time, Camera);
 
-        TestPS->Update(delta_time, 100);
+        if (i++ == 8)
+        {
+            TestPS->Debug();
+            TestPS->Update(delta_time, 10000);
+            i = 0;
+            TestPS->Debug();
+        }
+        else
+        {
+            TestPS->Update(delta_time, 0);
+        }
 
         // Render all particle systems.
         TestPS->Render(Camera, Window);

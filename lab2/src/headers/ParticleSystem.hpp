@@ -26,6 +26,8 @@ namespace RA
 
         inline unsigned int GetMaxParticles() const { return n_max_particles; }
 
+        void Debug();
+
     private:
         unsigned int n_max_particles;
 
