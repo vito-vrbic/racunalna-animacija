@@ -2,6 +2,7 @@
 
 // Local
 #include "Camera.hpp"
+#include "ParticleSystem.hpp"
 #include "Window.hpp"
 // Standard
 #include <iostream>
@@ -16,6 +17,8 @@ namespace RA
 
         /// Runs the application loop.
         void Run();
+
+        extern std::shared_ptr<ParticleSystem> TestPS;
 
         extern std::shared_ptr<RA::Window> Window;
         extern std::shared_ptr<RA::Camera> Camera;

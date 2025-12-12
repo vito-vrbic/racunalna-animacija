@@ -43,6 +43,9 @@ namespace RA
         /// @brief Set an integer uniform.
         void SetUniform(const std::string &name, int value) const;
 
+        /// @brief Set an unsigned integer uniform.
+        void SetUniform(const std::string &name, unsigned int value) const;
+
         /// @brief Set a float uniform.
         void SetUniform(const std::string &name, float value) const;
 

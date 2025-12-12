@@ -13,7 +13,5 @@ int main(int argc, char *argv[])
     Application::Initialize();
     Assets::Load();
 
-    // SCENE SETUP
-
     Application::Run();
 }

@@ -4,12 +4,15 @@ namespace RA::Application
 {
     std::shared_ptr<RA::Window> Window = nullptr;
     std::shared_ptr<RA::Camera> Camera = nullptr;
+    std::shared_ptr<RA::ParticleSystem> TestPS = nullptr;
 }
 
 void RA::Application::Initialize()
 {
     Application::Window = std::make_shared<RA::Window>(1000, 800, "2nd Laboratory Exercise");
     Application::Camera = std::make_shared<RA::Camera>();
+
+    Application::TestPS = std::make_shared<RA::ParticleSystem>(1000);
 }
 
 void InputMoveCamera(GLFWwindow *window, float delta_time, std::shared_ptr<RA::Camera> &camera)
@@ -26,9 +29,9 @@ void InputMoveCamera(GLFWwindow *window, float delta_time, std::shared_ptr<RA::C
         cameraSpeed *= 0.5f;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera->MoveLocal(glm::vec3(0.0f, 0.0f, -cameraSpeed));
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera->MoveLocal(glm::vec3(0.0f, 0.0f, cameraSpeed));
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera->MoveLocal(glm::vec3(0.0f, 0.0f, -cameraSpeed));
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         camera->MoveLocal(glm::vec3(-cameraSpeed, 0.0f, 0.0f));
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
@@ -74,6 +77,8 @@ void RA::Application::Run()
 
     while (!Window->ShouldClose())
     {
+        Window->Clear(0, 0, 0, 1);
+
         // Calculate the delta_time
         float current_frame = static_cast<float>(glfwGetTime());
         float delta_time = current_frame - last_frame;
@@ -82,11 +87,12 @@ void RA::Application::Run()
         // Input: Camera Movement.
         InputMoveCamera(Window->GetNativeHandle(), delta_time, Camera);
 
-        // TODO: PARTICLE SYSTEM COMPUTE SHADER CALLS.
-        // TODO: PARTICLE SYSTEM RENDERING.
+        TestPS->Update(delta_time, 100);
+
+        // Render all particle systems.
+        TestPS->Render(Camera, Window);
 
         Window->SwapBuffers();
         Window->PollEvents();
-        Window->Clear(1, 1, 1, 1);
     }
 }

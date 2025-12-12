@@ -12,7 +12,9 @@ namespace RA
     {
         void Load();
 
-        extern std::shared_ptr<RA::ComputeShader> PSCompute;
-        extern std::shared_ptr<RA::RenderShader> PSRender;
+        extern std::shared_ptr<RA::ComputeShader> BirthCompute;
+        extern std::shared_ptr<RA::ComputeShader> LifeCompute;
+        extern std::shared_ptr<RA::ComputeShader> DeadResetCompute;
+        extern std::shared_ptr<RA::RenderShader> Render;
     };
 };

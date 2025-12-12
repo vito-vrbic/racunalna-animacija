@@ -1,0 +1,58 @@
+#version 460 compatibility
+
+layout(local_size_x = 128) in;
+
+struct Particle
+{
+    vec3 position;
+    float size;
+    vec3 velocity;
+    float age;
+};
+
+layout(std430, binding = 0) buffer Particles { Particle particles[]; };
+layout(std430, binding = 1) buffer DeadList { uint dead_indices[]; };
+
+uniform int n_new_particles;
+uniform int max_particles;
+uniform int random;
+
+// Simple RNG
+uint Hash(uint x)
+{
+    x ^= x >> 16; x *= 0x7feb352d;
+    x ^= x >> 15; x *= 0x846ca68b;
+    x ^= x >> 16;
+    return x;
+}
+float Rand01(uint seed) { return float(Hash(seed))/4294967295.0; }
+
+vec3 Position(uint seed)
+{
+    return vec3(Rand01(seed)-0.5, Rand01(seed+1)-0.5, Rand01(seed+2)-0.5);
+}
+float Size(uint seed)
+{
+    return 0.2 + Rand01(seed)*0.3;
+}
+vec3 Velocity(uint seed)
+{
+    return vec3(Rand01(seed)*10-5, Rand01(seed+1)*10, Rand01(seed+2)*10-5);
+}
+
+void main()
+{
+    uint idx = gl_GlobalInvocationID.x;
+    if(idx >= n_new_particles) return;
+
+    int slot_idx = int(atomicAdd(dead_indices[0], -1)) - 1;
+    if(slot_idx < 0) return;
+
+    uint slot = dead_indices[slot_idx + 1];
+
+    uint seed = idx + random;
+    particles[slot].position = Position(seed);
+    particles[slot].size = Size(seed);
+    particles[slot].velocity = Velocity(seed);
+    particles[slot].age = 0.0;
+}
