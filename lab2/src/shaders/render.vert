@@ -50,7 +50,7 @@ void main()
     // Scale quad by particle size.
     vec3 offset = (cam_right * aPos.x + cam_up * aPos.y) * p.size;
 
-    // Transform particle position
+    // Transform particle position.
     gl_Position = proj * view * vec4(p.position + offset, 1.0);
 
     vAge = p.age;

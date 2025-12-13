@@ -17,3 +17,14 @@ U oba slučaja potrebno je predati **dva argumenta**:
 2. Putanju do `.crv` datoteke koja sadrži poligon vrhova.
 
 Primjeri `.crv` datoteka nalaze se u folderu `/assets`.
+
+## Laboratorijska vježba 2 - Čestični sustavi
+Sve što je potrebno za **Laboratorijsku vježbu 2** nalazi se u folderu `/lab2`.
+
+### Izgradnja i pokretanje
+Za izgradnju `.exe` datoteke za testiranje potrebno je pokrenuti sljedeće `.bat` skripte:
+- `/scripts/config.bat`
+- `/scripts/build.bat`
+
+Nakon izgradnje, `.exe` datoteka može se pokrenuti direktno ili preko `.bat` skripte:
+- `/lab1/scripts/run.bat`

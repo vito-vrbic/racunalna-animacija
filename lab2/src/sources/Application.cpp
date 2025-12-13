@@ -14,10 +14,10 @@ void RA::Application::Initialize()
     Window = std::make_shared<RA::Window>(1000, 800, "2nd Laboratory Exercise");
     Camera = std::make_shared<RA::Camera>();
 
-    CloudPS = std::make_shared<RA::ParticleSystem>(50);
+    CloudPS = std::make_shared<RA::ParticleSystem>(10);
     CloudPS->LoadTexture("assets/cloud.png");
-    CloudPS->Properties.MaximumLifeLength = 16.f;
-    CloudPS->Properties.MinimumLifeLength = 8.f;
+    CloudPS->Properties.MaximumLifeLength = 160.f;
+    CloudPS->Properties.MinimumLifeLength = 80.f;
     CloudPS->Properties.StartColor = glm::vec4(0.7, 0.7, 0.7, 0.8);
     CloudPS->Properties.EndColor = glm::vec4(0.5, 0.5, 0.5, 0.4);
     CloudPS->Properties.Frequency = 10.f;
@@ -27,6 +27,7 @@ void RA::Application::Initialize()
     CloudPS->Properties.MinimumStartSize = 10.f;
     CloudPS->Properties.Gravity = false;
     CloudPS->Properties.SizeFalloff = 0.0f;
+    CloudPS->Properties.StartVelocityStrength = 0.f;
 
     StarsPS = std::make_shared<RA::ParticleSystem>(100);
     StarsPS->LoadTexture("assets/star.png");
@@ -42,7 +43,7 @@ void RA::Application::Initialize()
     StarsPS->Properties.SizeFalloff = 0.1f;
     StarsPS->Properties.StartVelocityStrength = 0.f;
 
-    SnowPS = std::make_shared<RA::ParticleSystem>(100); // more particles than clouds
+    SnowPS = std::make_shared<RA::ParticleSystem>(100);
     SnowPS->LoadTexture("assets/snow.png");
     SnowPS->Properties.MaximumLifeLength = 8.f;
     SnowPS->Properties.MinimumLifeLength = 4.f;
@@ -51,8 +52,8 @@ void RA::Application::Initialize()
     SnowPS->Properties.Frequency = 10.f;
     SnowPS->Properties.SourcePosition = glm::vec3(0.0, 12.0, 1.0);
     SnowPS->Properties.SourceSphereRadius = glm::vec3(5.0, 0.5, 5.0);
-    SnowPS->Properties.MaximumStartSize = 0.2f;
-    SnowPS->Properties.MinimumStartSize = 0.1f;
+    SnowPS->Properties.MaximumStartSize = 0.4f;
+    SnowPS->Properties.MinimumStartSize = 0.3f;
     SnowPS->Properties.Gravity = true;
     SnowPS->Properties.StartVelocityStrength = 0.9f;
     SnowPS->Properties.SizeFalloff = 0.0f;
