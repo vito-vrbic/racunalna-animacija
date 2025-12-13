@@ -10,7 +10,7 @@ Za izgradnju `.exe` datoteke za testiranje potrebno je pokrenuti sljedeće `.bat
 - `/scripts/build.bat`
 
 Nakon izgradnje, `.exe` datoteka može se pokrenuti direktno ili preko `.bat` skripte:
-- `/lab1/scripts/run.bat`
+- `/scripts/run.bat`
 
 U oba slučaja potrebno je predati **dva argumenta**:
 1. Putanju do `.obj` datoteke koja sadrži mrežu vrhova i trokutova.
@@ -27,4 +27,5 @@ Za izgradnju `.exe` datoteke za testiranje potrebno je pokrenuti sljedeće `.bat
 - `/scripts/build.bat`
 
 Nakon izgradnje, `.exe` datoteka može se pokrenuti direktno ili preko `.bat` skripte:
-- `/lab1/scripts/run.bat`
+
+- `/scripts/run.bat`
