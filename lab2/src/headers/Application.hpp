@@ -20,15 +20,14 @@ namespace RA
         /// Runs the application loop using vital components (Window, Camera, ParticleSystems)
         void Run();
 
-        extern std::shared_ptr<RA::ParticleSystem> TestPS;
+        extern std::shared_ptr<RA::ParticleSystem> CloudPS;
+        extern std::shared_ptr<RA::ParticleSystem> StarsPS;
+        extern std::shared_ptr<RA::ParticleSystem> SnowPS;
 
         /// Window component of the Application.
         extern std::shared_ptr<RA::Window> Window;
 
         /// Camera component of the Application.
         extern std::shared_ptr<RA::Camera> Camera;
-
-        /// Vector of ParticleSystem pointers used by the Application.
-        extern std::vector<std::shared_ptr<RA::ParticleSystem>> ParticleSystems;
     };
 };

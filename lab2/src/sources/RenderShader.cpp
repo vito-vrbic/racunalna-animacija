@@ -183,6 +183,11 @@ void RA::RenderShader::SetUniform(const std::string &name, const glm::vec4 &vec)
 	glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
 }
 
+void RA::RenderShader::SetUniform(const std::string &name, const glm::vec3 &vec) const
+{
+	glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
+}
+
 std::shared_ptr<RA::RenderShader> RA::RenderShader::LoadShader(const char *name)
 {
 	std::string path_vert = "./shaders/" + std::string(name) + ".vert";

@@ -30,16 +30,17 @@ void ParticleSystem::InitializeBuffers_()
     glGenBuffers(1, &m_ssbo_particles_);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssbo_particles_);
 
-    // Each particle has the following structure (8 floats):
+    // Each particle has the following structure (9 floats):
     // vec3 pos (3 floats)
     // float size (1 float)
     // vec3 velocity (3 float)
     // float age (1 float)
-    std::vector<float> init_particles(n_max_particles_ * 8, 0.0f);
+    // float life_length (1 float)
+    std::vector<float> init_particles(n_max_particles_ * 9, 0.0f);
 
     // Initialize all particles as dead (set age to -1).
     for (unsigned int i = 0; i < n_max_particles_; i++)
-        init_particles[i * 8 + 7] = -1.0f;
+        init_particles[i * 9 + 7] = -1.0f;
 
     // Store particle data inside the particle SSBO.
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * init_particles.size(), init_particles.data(), GL_DYNAMIC_DRAW);
@@ -113,7 +114,7 @@ void ParticleSystem::BindForRendering_()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_ssbo_particles_);
 }
 
-void ParticleSystem::Update(float dt, int new_particles)
+void ParticleSystem::Update(float dt)
 {
     // Check if the all shaders are loaded.
     if (!LifeCompute || !BirthCompute || !DeadResetCompute)
@@ -122,18 +123,28 @@ void ParticleSystem::Update(float dt, int new_particles)
         return;
     }
 
-    // Calculate the group amount for the compute shaders.
+    // Update the frequency accumulator and get a spawn count for this update.
+    spawn_frequency_accumulator_ += Properties.Frequency * dt;
+    int spawn_count = (int)spawn_frequency_accumulator_;
+    spawn_frequency_accumulator_ -= spawn_count;
 
     // Update life of all particles.
     LifeCompute->Use();
     LifeCompute->SetUniform("delta_time", dt);
     LifeCompute->SetUniform("max_particles", (int)n_max_particles_);
-    LifeCompute->SetUniform("life_length", LifeLength);
+    LifeCompute->SetUniform("gravity", Properties.Gravity);
+    LifeCompute->SetUniform("size_falloff", Properties.SizeFalloff);
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_ssbo_particles_);
 
     glDispatchCompute(n_cmpt_groups_, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    if (spawn_count <= 0)
+    {
+        spawn_count = 0;
+        return;
+    }
 
     // Rebuild deadlist SSBO data from the current particle ages.
     DeadResetCompute->Use();
@@ -147,8 +158,15 @@ void ParticleSystem::Update(float dt, int new_particles)
 
     // Spawn new particles into dead slots.
     BirthCompute->Use();
-    BirthCompute->SetUniform("n_new_particles", new_particles);
+    BirthCompute->SetUniform("n_new_particles", spawn_count);
     BirthCompute->SetUniform("random", std::rand() % 10000);
+    BirthCompute->SetUniform("maximum_life_length", Properties.MaximumLifeLength);
+    BirthCompute->SetUniform("minimum_life_length", Properties.MinimumLifeLength);
+    BirthCompute->SetUniform("start_velocity_strength", Properties.StartVelocityStrength);
+    BirthCompute->SetUniform("maximum_start_size", Properties.MaximumStartSize);
+    BirthCompute->SetUniform("minimum_start_size", Properties.MinimumStartSize);
+    BirthCompute->SetUniform("src_pstn", Properties.SourcePosition);
+    BirthCompute->SetUniform("src_r", Properties.SourceSphereRadius);
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_ssbo_particles_);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_ssbo_deadlist_);
@@ -160,7 +178,7 @@ void ParticleSystem::Update(float dt, int new_particles)
 void ParticleSystem::Render(std::shared_ptr<Camera> cam, std::shared_ptr<Window> win)
 {
     // Disable the depth mask for transparency.
-    glDepthMask(GL_TRUE);
+    glDepthMask(GL_FALSE);
 
     // Don't render if there is not a render shader.
     if (!Assets::Render)
@@ -170,6 +188,11 @@ void ParticleSystem::Render(std::shared_ptr<Camera> cam, std::shared_ptr<Window>
     Assets::Render->Use();
     Assets::Render->SetUniform("view", cam->GetViewMatrix());
     Assets::Render->SetUniform("proj", win->GetPerspectiveMatrix());
+    Assets::Render->SetUniform("cam_right", cam->GetRight());
+    Assets::Render->SetUniform("cam_up", cam->GetUp());
+    Assets::Render->SetUniform("cam_forward", cam->GetFront());
+    Assets::Render->SetUniform("start_color", Properties.StartColor);
+    Assets::Render->SetUniform("end_color", Properties.EndColor);
 
     // Set the image is such exists.
     if (m_image != 0)

@@ -2,6 +2,7 @@
 
 // Local
 #include "Assets.hpp"
+#include "PSProperties.hpp"
 // Standard
 #include <iostream>
 #include <memory>
@@ -29,8 +30,7 @@ namespace RA
 
         /// @brief Calls the updating .compute shaders
         /// @param dt The time passed since last frame/last call of the update function.
-        /// @param new_particles Number of particles to spawn in this update call.
-        void Update(float dt, int new_particles = 0);
+        void Update(float dt);
 
         /// @brief Renders the particle system onto the screen.
         /// @param cam Pointer to the application's Camera object.
@@ -46,8 +46,8 @@ namespace RA
         /// @return If the operation was sucessful or not.
         bool LoadTexture(const std::string &path);
 
-        // TODO: TURN ALL THIS INTO PSPROPERTIES STRUCTURE
-        int LifeLength = 1;
+        /// @brief Structure which holds all the editable properties of the particle system.
+        PSProperties Properties;
 
     private:
         /// @brief Holds the max particles number and does not change through the lifetime of the object.
@@ -65,6 +65,9 @@ namespace RA
         GLuint m_vbo_ = 0;
         /// @brief Handle for the texture of an image to render on each particle quad.
         GLuint m_image = 0;
+
+        /// @brief Helper variable to be able to spawn particles per frequency.
+        float spawn_frequency_accumulator_ = 0.0f;
 
         /// @brief Initializes the SSBOs.
         void InitializeBuffers_();

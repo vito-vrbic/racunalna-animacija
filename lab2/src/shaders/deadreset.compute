@@ -8,6 +8,7 @@ struct Particle
     float size;
     vec3 velocity;
     float age;
+    float life_length;
 };
 
 // Particle buffer

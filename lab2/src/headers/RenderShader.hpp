@@ -55,6 +55,9 @@ namespace RA
 		/// @brief Set a 4D vector uniform.
 		void SetUniform(const std::string &name, const glm::vec4 &vec) const;
 
+		/// @brief Set a 3D vector uniform.
+		void SetUniform(const std::string &name, const glm::vec3 &vec) const;
+
 		/// @brief Returns true if this shader includes a geometry stage.
 		bool HasGeometry() const { return _geometry; };
 

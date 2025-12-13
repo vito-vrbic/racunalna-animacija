@@ -55,6 +55,9 @@ namespace RA
         /// @brief Set a 4D vector uniform.
         void SetUniform(const std::string &name, const glm::vec4 &vec) const;
 
+        /// @brief Set a 3D vector uniform.
+        void SetUniform(const std::string &name, const glm::vec3 &vec) const;
+
     private:
         /// @brief Check for shader compiler or program linking errors.
         void _CheckCompilerErrors(unsigned int shader, std::string type);

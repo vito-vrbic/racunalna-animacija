@@ -4,18 +4,58 @@ namespace RA::Application
 {
     std::shared_ptr<RA::Window> Window = nullptr;
     std::shared_ptr<RA::Camera> Camera = nullptr;
-    std::shared_ptr<RA::ParticleSystem> TestPS = nullptr;
-    std::vector<std::shared_ptr<RA::ParticleSystem>> ParticleSystems;
+    std::shared_ptr<RA::ParticleSystem> CloudPS = nullptr;
+    std::shared_ptr<RA::ParticleSystem> StarsPS = nullptr;
+    std::shared_ptr<RA::ParticleSystem> SnowPS = nullptr;
 }
 
 void RA::Application::Initialize()
 {
-    Application::Window = std::make_shared<RA::Window>(1000, 800, "2nd Laboratory Exercise");
-    Application::Camera = std::make_shared<RA::Camera>();
+    Window = std::make_shared<RA::Window>(1000, 800, "2nd Laboratory Exercise");
+    Camera = std::make_shared<RA::Camera>();
 
-    Application::TestPS = std::make_shared<RA::ParticleSystem>(1000000);
-    Application::TestPS->LoadTexture("assets/cop.png");
-    Application::TestPS->LifeLength = 4;
+    CloudPS = std::make_shared<RA::ParticleSystem>(50);
+    CloudPS->LoadTexture("assets/cloud.png");
+    CloudPS->Properties.MaximumLifeLength = 16.f;
+    CloudPS->Properties.MinimumLifeLength = 8.f;
+    CloudPS->Properties.StartColor = glm::vec4(0.7, 0.7, 0.7, 0.8);
+    CloudPS->Properties.EndColor = glm::vec4(0.5, 0.5, 0.5, 0.4);
+    CloudPS->Properties.Frequency = 10.f;
+    CloudPS->Properties.SourcePosition = glm::vec3(0.0, 10.0, 1.0);
+    CloudPS->Properties.SourceSphereRadius = glm::vec3(5.0, 2.0, 2.0);
+    CloudPS->Properties.MaximumStartSize = 18.f;
+    CloudPS->Properties.MinimumStartSize = 10.f;
+    CloudPS->Properties.Gravity = false;
+    CloudPS->Properties.SizeFalloff = 0.0f;
+
+    StarsPS = std::make_shared<RA::ParticleSystem>(100);
+    StarsPS->LoadTexture("assets/star.png");
+    StarsPS->Properties.MaximumLifeLength = 1000.f;
+    StarsPS->Properties.MinimumLifeLength = 100.f;
+    StarsPS->Properties.StartColor = glm::vec4(1.0, 1.0, 1.0, 0.8);
+    StarsPS->Properties.EndColor = glm::vec4(1.0, 1.0, 1.0, 0.8);
+    StarsPS->Properties.Frequency = 10.f;
+    StarsPS->Properties.SourcePosition = glm::vec3(0.0, 50.0, 0.0);
+    StarsPS->Properties.SourceSphereRadius = glm::vec3(100.0, 0.0, 100.0);
+    StarsPS->Properties.MaximumStartSize = 2.f;
+    StarsPS->Properties.Gravity = false;
+    StarsPS->Properties.SizeFalloff = 0.1f;
+    StarsPS->Properties.StartVelocityStrength = 0.f;
+
+    SnowPS = std::make_shared<RA::ParticleSystem>(100); // more particles than clouds
+    SnowPS->LoadTexture("assets/snow.png");
+    SnowPS->Properties.MaximumLifeLength = 8.f;
+    SnowPS->Properties.MinimumLifeLength = 4.f;
+    SnowPS->Properties.StartColor = glm::vec4(1.0, 1.0, 1.0, 0.9);
+    SnowPS->Properties.EndColor = glm::vec4(1.0, 1.0, 1.0, 0.5);
+    SnowPS->Properties.Frequency = 10.f;
+    SnowPS->Properties.SourcePosition = glm::vec3(0.0, 12.0, 1.0);
+    SnowPS->Properties.SourceSphereRadius = glm::vec3(5.0, 0.5, 5.0);
+    SnowPS->Properties.MaximumStartSize = 0.2f;
+    SnowPS->Properties.MinimumStartSize = 0.1f;
+    SnowPS->Properties.Gravity = true;
+    SnowPS->Properties.StartVelocityStrength = 0.9f;
+    SnowPS->Properties.SizeFalloff = 0.0f;
 }
 
 void InputMoveCamera(GLFWwindow *window, float delta_time, std::shared_ptr<RA::Camera> &camera)
@@ -78,10 +118,9 @@ void RA::Application::Run()
 {
     float last_frame = 0.0f;
 
-    float i = 0;
     while (!Window->ShouldClose())
     {
-        Window->Clear(0, 0, 0, 1);
+        Window->Clear(0.039, 0.039, 0.118, 1);
 
         // Calculate the delta_time
         float current_frame = static_cast<float>(glfwGetTime());
@@ -91,20 +130,14 @@ void RA::Application::Run()
         // Input: Camera Movement.
         InputMoveCamera(Window->GetNativeHandle(), delta_time, Camera);
 
-        i += delta_time;
-
-        if (i >= 1)
-        {
-            TestPS->Update(delta_time, 50000);
-            i = 0;
-        }
-        else
-        {
-            TestPS->Update(delta_time, 0);
-        }
+        CloudPS->Update(delta_time);
+        StarsPS->Update(delta_time);
+        SnowPS->Update(delta_time);
 
         // Render all particle systems.
-        TestPS->Render(Camera, Window);
+        StarsPS->Render(Camera, Window);
+        CloudPS->Render(Camera, Window);
+        SnowPS->Render(Camera, Window);
 
         Window->SwapBuffers();
         Window->PollEvents();

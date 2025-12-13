@@ -80,6 +80,11 @@ void RA::ComputeShader::SetUniform(const std::string &name, const glm::vec4 &vec
     glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
 }
 
+void RA::ComputeShader::SetUniform(const std::string &name, const glm::vec3 &vec) const
+{
+    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
+}
+
 std::shared_ptr<RA::ComputeShader> RA::ComputeShader::LoadShader(const char *name)
 {
     std::string path = "./shaders/" + std::string(name) + ".compute";
