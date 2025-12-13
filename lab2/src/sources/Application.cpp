@@ -5,6 +5,7 @@ namespace RA::Application
     std::shared_ptr<RA::Window> Window = nullptr;
     std::shared_ptr<RA::Camera> Camera = nullptr;
     std::shared_ptr<RA::ParticleSystem> TestPS = nullptr;
+    std::vector<std::shared_ptr<RA::ParticleSystem>> ParticleSystems;
 }
 
 void RA::Application::Initialize()
@@ -12,7 +13,9 @@ void RA::Application::Initialize()
     Application::Window = std::make_shared<RA::Window>(1000, 800, "2nd Laboratory Exercise");
     Application::Camera = std::make_shared<RA::Camera>();
 
-    Application::TestPS = std::make_shared<RA::ParticleSystem>(1000);
+    Application::TestPS = std::make_shared<RA::ParticleSystem>(1000000);
+    Application::TestPS->LoadTexture("assets/cop.png");
+    Application::TestPS->LifeLength = 4;
 }
 
 void InputMoveCamera(GLFWwindow *window, float delta_time, std::shared_ptr<RA::Camera> &camera)
@@ -75,7 +78,7 @@ void RA::Application::Run()
 {
     float last_frame = 0.0f;
 
-    int i = 0;
+    float i = 0;
     while (!Window->ShouldClose())
     {
         Window->Clear(0, 0, 0, 1);
@@ -88,12 +91,12 @@ void RA::Application::Run()
         // Input: Camera Movement.
         InputMoveCamera(Window->GetNativeHandle(), delta_time, Camera);
 
-        if (i++ == 8)
+        i += delta_time;
+
+        if (i >= 1)
         {
-            TestPS->Debug();
-            TestPS->Update(delta_time, 10000);
+            TestPS->Update(delta_time, 50000);
             i = 0;
-            TestPS->Debug();
         }
         else
         {

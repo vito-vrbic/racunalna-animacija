@@ -19,6 +19,7 @@ layout(std430, binding = 0) buffer Particles
 // Uniforms
 uniform float delta_time;
 uniform int max_particles;
+uniform int life_length;
 
 void main()
 {
@@ -28,14 +29,14 @@ void main()
     if (particles[idx].age < 0.0) return;
 
     // Gravity
-    particles[idx].velocity += vec3(0.0, -9.8, 0.0) * delta_time;
+    particles[idx].velocity += vec3(0.0, 0.0/*-9.8*/, 0.0) * delta_time;
 
     // Shrink size
     if(particles[idx].size > 0.0) particles[idx].size *= 1.0 - delta_time;
     if(particles[idx].size < 0.0) particles[idx].size = 0.0;
 
     // Age particle
-    particles[idx].age += delta_time;
+    particles[idx].age += delta_time/life_length;
     if(particles[idx].age > 1.0)
     {
         particles[idx].age = -1.0;

@@ -49,12 +49,20 @@ vec3 Position(uint seed)
 
 float Size(uint seed)
 {
-    return 0.2 + Rand01(seed) * 0.3;
+    return 0.2 + Rand01(seed) * 5;
 }
 
 vec3 Velocity(uint seed)
 {
-    return vec3(Rand01(seed) * 10.0 - 5.0, Rand01(seed + 1) * 10.0, Rand01(seed + 2) * 10.0 - 5.0);
+    // Generate 3 random numbers in [-1, 1]
+    float x = Rand01(seed)     * 2.0 - 1.0;
+    float y = Rand01(seed + 1) * 2.0 - 1.0;
+    float z = Rand01(seed + 2) * 2.0 - 1.0;
+
+    vec3 dir = normalize(vec3(x, y, z));
+
+    float speed = 5.0; // choose your speed
+    return dir * speed;
 }
 
 void main()
