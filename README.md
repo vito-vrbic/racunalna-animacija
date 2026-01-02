@@ -29,3 +29,22 @@ Za izgradnju `.exe` datoteke za testiranje potrebno je pokrenuti sljedeće `.bat
 Nakon izgradnje, `.exe` datoteka može se pokrenuti direktno ili preko `.bat` skripte:
 
 - `/scripts/run.bat`
+
+## Projekt - Gerstnerovi valovi duboke vode
+Sve što je potrebno za **Projekt** nalazi se u folderu `/projekt`.
+
+### Izgradnja i pokretanje
+Za izgradnju "igrice" korišten je Unity Editor 2022.3.62f2, a projekt sa svim datotekama za izgradnju nalazi se u folderu `/Waverider`.
+
+Sama izvršna datoteka/build datoteka za "igricu" već je izgrađena i može se naći u folderu `/Build`
+
+Kontrole za "igricu" su sljedeće:
+- `W` za davanje brzine unaprijed,
+- `S` za davanje brzine unatrag,
+- `A` za skretanje ulijevo,
+- `D` za skretanje udesno,
+- `Mouse Right Click + Mouse Move` - pomicanje orbitalne kamere,
+- `Mouse Scroll` - promjena zoom-a kamere,
+- `Escape` - gašenje aplikacije.
+
+U igrici se brod može kretati te se oko njega u radijusu stvaraju bačve koje isto kao i on plutaju na vodi. Pri koliziji bačve nestaju kao da ih brod kupi i time čisti ocean.
