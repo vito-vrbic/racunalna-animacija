@@ -38,6 +38,8 @@ public class BoatController : MonoBehaviour
         UpdateYaw();
         UpdateMovement();
         UpdateRotation();
+
+        if (Input.GetKey(KeyCode.Escape)) Application.Quit();
     }
 
     private void FixedUpdate()
